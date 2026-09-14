@@ -5,9 +5,13 @@ public class SuperAttaque : MonoBehaviour
 {
     public static SuperAttaque Instance;
 
-    public float grenadeAOE = 4f;
-    public LineRenderer laser;
-    public float laserDuration = 2f;
+    public Transform canonLaser;
+    public Transform canonGrenade;
+    public GameObject laserPrefab;
+    public GameObject grenadePrefab;
+    public int grenadeXP = 50;
+    public int laserXP = 75;
+    public int sweepXP = 150;
 
     private void Awake()
     {
@@ -16,62 +20,29 @@ public class SuperAttaque : MonoBehaviour
 
     public void UseGrenade()
     {
-        if (!XPManager.Instance.IsHalfFull()) return;
+        if (XPManager.Instance.xp < grenadeXP) return;
 
-        XPManager.Instance.ConsumeXP(50);
+        XPManager.Instance.ConsumeXP(grenadeXP);
 
-        Collider[] hits = Physics.OverlapSphere(Vector3.zero, grenadeAOE);
-        foreach (var h  in hits)
-        {
-            EliminationEnnemi a = h.GetComponent<EliminationEnnemi>();
-            if (a != null)
-            {
-                a.Die();
-            }
-        }
+        Instantiate(grenadePrefab, canonGrenade.position, canonGrenade.rotation);
     }
+    public void UseLaser()
+    {
+        if (XPManager.Instance.xp < laserXP) return;
 
+        XPManager.Instance.ConsumeXP(laserXP);
+
+        GameObject laser = Instantiate(laserPrefab, canonLaser.position, canonLaser.rotation);
+        laser.transform.SetParent(canonLaser);
+    }
     public void UseSweep()
     {
-        if (!XPManager.Instance.IsVeryFull()) return;
+        if (XPManager.Instance.xp < sweepXP) return;
 
-        XPManager.Instance.ConsumeXP(150);
+        XPManager.Instance.ConsumeXP(sweepXP);
 
         var aliens = Object.FindObjectsByType<EliminationEnnemi>(FindObjectsSortMode.None);
 
-        foreach (var alien in aliens)
-            alien.Die();
-    }
-
-    public void UseLaser()
-    {
-        if (!XPManager.Instance.IsThreeQuarterFull()) return;
-
-        XPManager.Instance.ConsumeXP(75);
-        StartCoroutine(Laser());
-    }
-
-    IEnumerator Laser()
-    {
-        laser.enabled = true;
-
-        float timer = 0f;
-        while (timer < laserDuration)
-        {
-            timer += Time.deltaTime;
-
-            Ray ray = new Ray(laser.transform.position, laser.transform.forward);
-            RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
-
-            foreach (var h in hits)
-            {
-                EliminationEnnemi a = h.collider.GetComponent<EliminationEnnemi>();
-                if (a != null) a.Die();
-            }
-
-            yield return null;
-        }
-
-        laser.enabled = false;
+        foreach (var alien in aliens) alien.DieNoXP();
     }
 }

@@ -13,9 +13,11 @@ public class MouvementVaisseau : MonoBehaviour
     [Header("Tir settings")]
     public GameObject blaster;
     public Transform canon;
-    public float cadenceTir = 0.25f;
+    public float cadenceTir = 1f;
 
     private float rechargeTir = 0f;
+
+    public bool canMoveAndShoot = true;
 
     void Update()
     {
@@ -25,6 +27,7 @@ public class MouvementVaisseau : MonoBehaviour
 
     void Deplacement()
     {
+        if (!canMoveAndShoot) return;
         float horizontalInput = Input.GetAxis("Horizontal");
         Vector3 pos = transform.position;
 
@@ -41,7 +44,9 @@ public class MouvementVaisseau : MonoBehaviour
 
     void Tir()
     {
+        if (!canMoveAndShoot) return;
         rechargeTir -= Time.deltaTime;
+
         if (Input.GetKey(KeyCode.Space) && rechargeTir <= 0f)
         {
             Instantiate(blaster, canon.position, canon.rotation);

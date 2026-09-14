@@ -3,6 +3,12 @@ using UnityEngine;
 public class BlasterEnnemi : MonoBehaviour
 {
     public float speed = 15f;
+    public float lifeTime = 7f;
+
+    void Start()
+    {
+        Destroy(gameObject, lifeTime);
+    }
 
     void Update()
     {
@@ -13,7 +19,11 @@ public class BlasterEnnemi : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Astee");
+            EliminationJoueur joueur = other.GetComponent<EliminationJoueur>();
+            if (joueur != null)
+            {
+                joueur.PrendreDegats(1);
+            }
             Destroy(gameObject);
         }
     }

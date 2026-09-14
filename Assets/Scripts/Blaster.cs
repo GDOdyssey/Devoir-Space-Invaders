@@ -14,4 +14,13 @@ public class Blaster : MonoBehaviour
     {
         transform.Translate(Vector3.forward * speed * Time.deltaTime);
     }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            other.GetComponent<EliminationJoueur>().PrendreDegats(1);
+            Destroy(gameObject);
+        }
+    }
 }

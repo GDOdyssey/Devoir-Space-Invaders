@@ -1,4 +1,3 @@
-using System.Threading;
 using UnityEngine;
 
 public class TirEnnemi : MonoBehaviour
@@ -7,11 +6,13 @@ public class TirEnnemi : MonoBehaviour
     public Transform canon;
     public float cadenceTir = 2f;
     public float chanceTir = 0.1f;
-
     private float rechargeTir;
+    public bool canShoot = true;
 
     void Update()
     {
+        if (!canShoot) return;
+
         rechargeTir += Time.deltaTime;
 
         if (rechargeTir >= cadenceTir)
